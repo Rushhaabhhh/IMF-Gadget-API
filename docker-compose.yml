@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - REDIS_HOST=redis
+    depends_on:
+      - db
+      - redis
+    networks:
+      - imf-network
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: gadgets
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - imf-network
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis-data:/data
+    networks:
+      - imf-network
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  imf-network:
+    driver: bridge
