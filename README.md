@@ -33,13 +33,13 @@ https://www.loom.com/share/fef202af89364bd1a0873eabe559829d
 
 ### Technology Stack
 
-Backend: Node.js with Express.js (TypeScript)
-Database: PostgreSQL
-ORM: Sequelize
-Authentication: JSON Web Tokens (JWT)
-Caching: Redis
-Deployment: Render
-Containerization: Docker
+- Backend: Node.js with Express.js (TypeScript)
+- Database: PostgreSQL
+- ORM: Sequelize
+- Authentication: JSON Web Tokens (JWT)
+- Caching: Redis
+- Deployment: Render
+- Containerization: Docker
 
 ### Project Structure
 ```
