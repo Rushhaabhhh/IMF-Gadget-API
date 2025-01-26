@@ -1,19 +1,25 @@
+const jwt = require('jsonwebtoken');
+
+// Middleware to authenticate and authorize the user
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  
-  if (!token) {
-    res.status(401).json({ error: 'Authentication required' });
-    return;
-  }
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    (req as any).user = decoded;
-    next();
-  } catch (error) {
-    res.status(403).json({ error: 'Invalid token' });
-  }
+        if (!token) {
+            return res.status(401).json({ success: false, message: "Token not provided" });
+        }
+
+        const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
+        req.body.userId = verifiedToken.userId;
+
+        next();
+    } catch (error) {
+        res.status(401).json({ success: false, message: "Token Invalid" });
+    }
 };
+
+
+module.exports = { authenticateToken };

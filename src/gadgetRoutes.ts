@@ -5,7 +5,7 @@ import {
   decommissionGadget, 
   triggerSelfDestruct 
 } from './gadgetController';
-import { authenticate } from './libs/middleware';
+import { authenticateToken } from './libs/middleware';
 
 const router = express.Router();
 
@@ -15,9 +15,9 @@ const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => P
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
-router.get('/gadgets', authenticate, asyncHandler(getGadgets));
-router.post('/gadgets', authenticate, asyncHandler(addGadget));
-router.delete('/gadgets/:id', authenticate, asyncHandler(decommissionGadget));
-// router.post('/gadgets/:id/self-destruct', authenticate, asyncHandler(triggerSelfDestruct));
+router.get('/gadgets', asyncHandler(getGadgets));
+router.post('/gadgets', asyncHandler(addGadget));
+router.delete('/gadgets/:id', asyncHandler(decommissionGadget));
+router.post('/gadgets/:id/self-destruct', asyncHandler(triggerSelfDestruct));
 
 export default router;
