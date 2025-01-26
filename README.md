@@ -13,6 +13,14 @@ https://www.loom.com/share/fef202af89364bd1a0873eabe559829d
 ### Postman Collection Link : https://imf-gadget-8462.postman.co/workspace/IMF-Gadget-Workspace~760fa289-d5bf-42f2-9ae8-411d0ae51f2a/request/34642197-6e5a106c-b6bb-4f0d-94db-bd6f2d7db815?action=share&creator=34642197&ctx=documentation
 
 ---
+## 🚨 Important Authentication Note
+
+- Bearer tokens are REQUIRED for ALL API endpoints EXCEPT `GET All Gadgets` route to retrieve gadgets so always include the bearer token in your request headers.
+- To obtain a bearer token, send a **`POST gadget`** request to the authentication endpoint.
+- Bearer Token Generation : The token will be generated and must be included in the Authorization header for subsequent requests.
+- Watch the authentication video tutorial for detailed guidance and refer to the Postman collection for example request configurations
+  
+---
 
 ## 🚀 Key Features
 
