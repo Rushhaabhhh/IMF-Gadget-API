@@ -13,16 +13,20 @@ if (!databaseUrl) {
   throw new Error('DATABASE_URL is not defined in the environment variables');
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
-  // logging: console.log,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  },
-  models: [Gadget]
+  logging: false,
+  dialectOptions: isProduction
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false, 
+        },
+      }
+    : {}, 
+  models: [Gadget],
 });
 
 export default sequelize;

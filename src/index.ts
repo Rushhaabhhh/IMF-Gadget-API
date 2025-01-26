@@ -8,7 +8,6 @@ import gadgetRoutes from './gadgetRoutes';
 dotenv.config();
 
 const app = express();
-
 app.use(express.json());
 
 const swaggerOptions = {
@@ -27,16 +26,12 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/gadgets', gadgetRoutes); 
+app.use('/gadgets', gadgetRoutes);
 
 sequelize
   .authenticate()
+  .then(() => sequelize.sync({ alter: true }))
   .then(() => {
-    console.log('Database connection established successfully.');
-    return sequelize.sync({ alter: true }); // Safer than force: false
-  })
-  .then(() => {
-    console.log('All models were synchronized successfully.');
     const PORT = process.env.PORT || 5432;
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
