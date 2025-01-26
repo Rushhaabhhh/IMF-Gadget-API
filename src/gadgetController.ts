@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Gadget, GadgetStatus } from './gadgetModel';
 import { generateCodename, generateMissionProbability } from './libs/helper';
-import { redis } from './libs/redis';
+import redisClient from './libs/redis';
 import { generateToken } from './libs/middleware';
 
 export class GadgetController {
@@ -17,9 +17,9 @@ export class GadgetController {
       const cacheKey = GadgetController.getCacheKey('all', status as string);
       
       // Check Redis cache first
-      const cachedGadgets = await redis.get(cacheKey);
+      const cachedGadgets = await redisClient.get(cacheKey);
       if (cachedGadgets) {
-        res.json(JSON.parse(cachedGadgets as string));
+        res.json(JSON.parse(cachedGadgets));
         return;
       }
 
@@ -27,7 +27,7 @@ export class GadgetController {
       const gadgets = await Gadget.findAll({ where: whereClause });
       
       // Cache results for 1 hour
-      await redis.set(cacheKey, JSON.stringify(gadgets), { ex: 3600 });
+      await redisClient.set(cacheKey, JSON.stringify(gadgets), 'EX', 3600);
       
       res.json(gadgets);
     } catch (error) {
@@ -43,7 +43,7 @@ export class GadgetController {
       const cacheKey = GadgetController.getCacheKey('id', id);
       
       // Check Redis cache first
-      const cachedGadget = await redis.get(cacheKey) as string;
+      const cachedGadget = await redisClient.get(cacheKey);
       if (cachedGadget) {
         res.json(JSON.parse(cachedGadget));
         return;
@@ -57,7 +57,7 @@ export class GadgetController {
       }
 
       // Cache results for 1 hour
-      await redis.set(cacheKey, JSON.stringify(gadget), { ex: 3600 });
+      await redisClient.set(cacheKey, JSON.stringify(gadget), 'EX', 3600);
       
       res.json(gadget);
     } catch (error) {
@@ -74,6 +74,7 @@ export class GadgetController {
         res.status(400).json({ error: 'Gadget name is required' });
         return;
       }
+
 
       const codename = generateCodename();
       const existingGadget = await Gadget.findOne({ where: { codename } });
@@ -93,7 +94,7 @@ export class GadgetController {
       const token = generateToken(newGadget.id);
 
       // Invalidate cache for all gadgets
-      await redis.del(GadgetController.getCacheKey('all'));
+      await redisClient.del(GadgetController.getCacheKey('all'));
       
       res.status(201).json({
         message: 'Gadget created successfully',
@@ -130,8 +131,8 @@ export class GadgetController {
 
       // Invalidate specific gadget cache and all gadgets cache
       await Promise.all([
-        redis.del(GadgetController.getCacheKey('id', id)),
-        redis.del(GadgetController.getCacheKey('all'))
+        redisClient.del(GadgetController.getCacheKey('id', id)),
+        redisClient.del(GadgetController.getCacheKey('all'))
       ]);
       
       res.json(gadget);
@@ -157,8 +158,8 @@ export class GadgetController {
 
       // Invalidate caches
       await Promise.all([
-        redis.del(GadgetController.getCacheKey('id', id)),
-        redis.del(GadgetController.getCacheKey('all'))
+        redisClient.del(GadgetController.getCacheKey('id', id)),
+        redisClient.del(GadgetController.getCacheKey('all'))
       ]);
 
       res.json({ message: 'Self-destruct sequence initiated', confirmationCode: Math.random().toString(36).substring(2, 8) });
@@ -184,8 +185,8 @@ export class GadgetController {
 
       // Invalidate caches
       await Promise.all([
-        redis.del(GadgetController.getCacheKey('id', id)),
-        redis.del(GadgetController.getCacheKey('all'))
+        redisClient.del(GadgetController.getCacheKey('id', id)),
+        redisClient.del(GadgetController.getCacheKey('all'))
       ]);
 
       res.json(gadget);
@@ -202,16 +203,16 @@ export class GadgetController {
       const cacheKey = GadgetController.getCacheKey('status', status);
       
       // Check Redis cache first
-      const cachedGadgets = await redis.get(cacheKey);
+      const cachedGadgets = await redisClient.get(cacheKey);
       if (cachedGadgets) {
-        res.json(JSON.parse(cachedGadgets as string));
+        res.json(JSON.parse(cachedGadgets));
         return;
       }
 
       const gadgets = await Gadget.findAll({ where: { status: status as GadgetStatus } });
       
       // Cache results for 1 hour
-      await redis.set(cacheKey, JSON.stringify(gadgets), { ex: 3600 });
+      await redisClient.set(cacheKey, JSON.stringify(gadgets), 'EX', 3600);
       
       res.json(gadgets);
     } catch (error) {
