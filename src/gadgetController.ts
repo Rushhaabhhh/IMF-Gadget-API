@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Gadget, GadgetStatus } from './gadgetModel';
 import { generateCodename, generateMissionProbability } from './libs/helper';
 import redisClient from './libs/redis';
+import { generateToken } from './libs/middleware';
 
 export class GadgetController {
   // Cache key generator
@@ -74,6 +75,7 @@ export class GadgetController {
         return;
       }
 
+
       const codename = generateCodename();
       const existingGadget = await Gadget.findOne({ where: { codename } });
 
@@ -89,10 +91,16 @@ export class GadgetController {
         missionSuccessProbability: generateMissionProbability(),
       });
 
+      const token = generateToken(newGadget.id);
+
       // Invalidate cache for all gadgets
       await redisClient.del(GadgetController.getCacheKey('all'));
       
-      res.status(201).json(newGadget);
+      res.status(201).json({
+        message: 'Gadget created successfully',
+        gadget: newGadget,
+        token, 
+      });
     } catch (error) {
       console.error('Error creating gadget:', error);
       res.status(400).json({ error: 'Failed to create gadget', details: (error as Error).message || 'Unknown error' });
