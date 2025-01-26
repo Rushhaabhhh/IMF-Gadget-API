@@ -19,9 +19,9 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API documentation for IMF Gadget Management',
     },
-    servers: [{ url: 'http://localhost:5000/gadgets' }],
+    servers: [{ url: 'http://localhost:5000' }],
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./gadgetRoutes.ts'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
