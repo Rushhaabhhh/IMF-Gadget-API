@@ -1,11 +1,11 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import pg from 'pg';
 import dotenv from 'dotenv';
+import { Gadget } from '../gadgetModel';
 
 dotenv.config();
 
 pg.types.setTypeParser(pg.types.builtins.INT8, (value) => parseInt(value, 10));
-
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -15,13 +15,14 @@ if (!databaseUrl) {
 
 const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
-  logging: false,
+  // logging: console.log,
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false,
-    },
+      rejectUnauthorized: false
+    }
   },
+  models: [Gadget]
 });
 
 export default sequelize;

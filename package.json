@@ -8,6 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/express": "^5.0.0",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "expres": "^0.0.5",
     "express": "^4.21.2",
@@ -15,11 +16,14 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "redis": "^4.7.0",
+    "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.5",
+    "sequelize-typescript": "^2.1.6",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/ioredis": "^4.28.10",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/pg": "^8.11.11",
